@@ -1,0 +1,109 @@
+# PokéAPI Python SDK
+
+All the Pokémon data you'll ever need in one place, easily accessible through a modern free open-source RESTful API.
+
+## What is this?
+
+This is a full RESTful API linked to an extensive database detailing everything about the Pokémon main game series.
+
+We've covered everything from Pokémon to Berry Flavors.
+
+## Where do I start?
+
+We have awesome [documentation](https://pokeapi.co/docs/v2) on how to use this API. It takes minutes to get started.
+
+This API will always be publicly available and will never require any extensive setup process to consume.
+
+Created by [**Paul Hallett**](https://github.com/phalt) and other [**PokéAPI contributors**](https://github.com/PokeAPI/pokeapi#contributing) around the world. Pokémon and Pokémon character names are trademarks of Nintendo.
+
+> Package `sdk` · Version `2.10.0` · 102 operations
+
+## Installation
+
+```sh
+python -m pip install sdk==2.10.0
+```
+
+## Quickstart
+
+The example calls `meta_retrieve` (GET `/api/v2/meta/`), a low-friction operation that requires no request arguments.
+
+```python
+import asyncio
+
+from sdk import ClientConfig
+from sdk.sdk import PokAPI
+
+
+async def main() -> None:
+    config = ClientConfig(
+        base_url="https://pokeapi.co",
+    )
+    client = PokAPI(config)
+    result = await client.utility.meta_retrieve()
+    print(result)
+
+
+asyncio.run(main())
+```
+
+## Authentication
+
+This build disables generated authentication. Eligible operations send no authentication credentials; use `ClientAuthConfig.headers` only for explicit service-specific headers. Operations with mandatory security requirements raise `SdkAuthError` before the request is dispatched.
+## Client behavior
+
+- Base URL: `https://pokeapi.co`.
+- Transport: httpx.
+- Timeout: 30,000 ms per attempt.
+- Retries: up to 3 attempts for status codes `408`, `425`, `429`, `500`, `502`, `503`, `504`, with 500–8,000 ms backoff.
+- Idempotency: enabled for `POST`, `PATCH` using `Idempotency-Key`.
+- Error telemetry: off. This build has no reporting endpoint and sends no error reports.
+
+High-level operation methods return the typed response body directly. The low-level request layer returns an `SdkResponse<T>` envelope containing data, status, headers, request ID, latency, and attempt count.
+
+## Errors and response metadata
+
+All failure paths use a small, predictable hierarchy:
+
+| Error | Meaning |
+| --- | --- |
+| `SdkValidationError` | A request argument failed an OpenAPI constraint before network I/O. |
+| `SdkHttpError` | The server returned a non-2xx response. |
+| `SdkNetworkError` | DNS, connection, TLS, or socket failure. |
+| `SdkTimeoutError` | The configured per-attempt timeout elapsed. |
+
+HTTP errors expose `status_code`, the response body and headers, plus `request_id` when the server supplies one. Preserve the request ID in support logs; it is the fastest way to correlate a failed SDK call with server-side traces.
+
+Common statuses are reported as a subclass of `SdkHttpError`, so a handler can catch only the one it handles: `SdkBadRequestError` (400), `SdkUnauthorizedError` (401), `SdkPermissionDeniedError` (403), `SdkNotFoundError` (404), `SdkConflictError` (409), `SdkUnprocessableEntityError` (422), `SdkRateLimitError` (429), `SdkInternalServerError` (any 5xx). Any other status is reported as `SdkHttpError` itself.
+
+When the API declares a model for an error response, `error.decode_body(ErrorModel)` decodes the body into it, where `ErrorModel` is that model. The raw body stays available on the error.
+
+An operation that declares error models also defines `<Operation>Error` beside it, the union of those models. `error.decode_body(<Operation>Error)` returns whichever model the body fits; narrow it with `isinstance`.
+
+## Pagination
+
+50 operations expose generated pagination helpers. Each operation has a `_paginated` async-iterator companion that yields items rather than page envelopes.
+
+Pagination follows the cursor, offset, page-number, or next-URL contract declared by the OpenAPI operation. It stops when the API signals completion and does not prefetch the entire collection.
+
+## Project layout and API discovery
+
+- Operation implementations are grouped under `src/sdk/methods/`.
+- 278 component models are split by API domain under `src/sdk/types/<domain>.py` or `types/<tag path>/models.py`, re-exported by `sdk.types`.
+- Component schemas can choose a nested model folder with `x-octri-sdk-tags: ["Billing/Invoices"]`; the first tag owns the model and `/` creates nesting.
+- [`sdk-manifest.json`](sdk-manifest.json) is the language-neutral public API index: operations, request/response modes, model properties, enum values, and generation settings.
+- Public barrel/module exports are the compatibility boundary. Import public model names from those exports; internal domain filenames may evolve without changing model names.
+
+## Links
+
+- [API documentation](https://pokeapi.co/docs/v2)
+
+<!-- sdk-studio-mock-tests -->
+## Local mock-server tests
+
+Generated SDK includes schema-derived, zero-dependency mock server and network
+contract suite. Node.js 20+ required. Contract probes use authored response
+examples only; schema-synthesized routes remain available to the local server.
+
+`./scripts/mock --port 4010` starts server. `./scripts/test` runs the mock contract suite, then native SDK tests. A zero-authored-example contract run succeeds with an explicit zero-test
+summary; mismatches in authored examples still fail.
