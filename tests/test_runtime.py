@@ -6,7 +6,7 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from sdk.client import (
+from octri_pokeapi_unofficial_demo_sdk.client import (
     ClientConfig,
     encode_path_segment,
     sdk_request,

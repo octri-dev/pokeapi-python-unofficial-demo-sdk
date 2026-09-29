@@ -1056,7 +1056,7 @@
                   "url": "https://example.com"
                 },
                 "relative_physical_stats": -2147483648,
-                "time_of_day": "2024-01-01T00:00:00Z",
+                "time_of_day": "2024-01-01",
                 "trade_species": {
                   "name": "Example Name",
                   "url": "https://example.com"
@@ -2053,7 +2053,7 @@
           "name": "Example Name",
           "official": false,
           "iso639": "iso639",
-          "iso3166": "iso3166",
+          "iso3166": "is",
           "names": [
             {
               "name": "Example Name",

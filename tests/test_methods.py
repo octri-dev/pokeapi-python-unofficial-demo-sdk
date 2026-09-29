@@ -15,8 +15,8 @@ from typing import Any
 
 import pytest
 
-import sdk as sdk
-from sdk.wire import to_wire
+import octri_pokeapi_unofficial_demo_sdk as sdk
+from octri_pokeapi_unofficial_demo_sdk.wire import to_wire
 
 CASES = json.loads(
     (Path(__file__).resolve().parents[1] / "test" / "sdk-method-cases.json").read_text(
@@ -71,16 +71,16 @@ def _matches(actual: Any, expected: Any) -> bool:
 
 
 def _method(case: dict[str, Any]) -> Any:
-    # Functions live in their namespace module (sdk.sdk.<owner>), not
+    # Functions live in their namespace module (octri_pokeapi_unofficial_demo_sdk.sdk.<owner>), not
     # on the package root, so an owner has to be imported before the lookup.
     owner = case.get("owner")
     if owner:
-        module = importlib.import_module("sdk.sdk." + owner)
+        module = importlib.import_module("octri_pokeapi_unofficial_demo_sdk.sdk." + owner)
         return getattr(module, case["methodName"])
     if hasattr(sdk, case["methodName"]):
         return getattr(sdk, case["methodName"])
     # Class style binds each function to the client class its sdk module declares.
-    module = importlib.import_module("sdk.sdk")
+    module = importlib.import_module("octri_pokeapi_unofficial_demo_sdk.sdk")
     client_class = next(
         value
         for value in vars(module).values()

@@ -10,7 +10,7 @@ from typing import Any
 import httpx
 import pytest
 
-from sdk.client import (
+from octri_pokeapi_unofficial_demo_sdk.client import (
     ClientAuthConfig,
     ClientConfig,
     IdempotencyConfig,
@@ -19,7 +19,7 @@ from sdk.client import (
     sdk_request_sync,
     serialize_query,
 )
-from sdk.errors import SdkHttpError
+from octri_pokeapi_unofficial_demo_sdk.errors import SdkHttpError
 
 FIXTURE = json.loads(
     (pathlib.Path(__file__).resolve().parents[1] / "test" / "sdk-behavior-cases.json").read_text(

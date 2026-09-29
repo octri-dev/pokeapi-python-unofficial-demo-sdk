@@ -16,12 +16,12 @@ This API will always be publicly available and will never require any extensive 
 
 Created by [**Paul Hallett**](https://github.com/phalt) and other [**PokéAPI contributors**](https://github.com/PokeAPI/pokeapi#contributing) around the world. Pokémon and Pokémon character names are trademarks of Nintendo.
 
-> Package `sdk` · Version `2.10.0` · 102 operations
+> Package `octri_pokeapi_unofficial_demo_sdk` · Version `2.10.1` · 102 operations
 
 ## Installation
 
 ```sh
-python -m pip install sdk==2.10.0
+python -m pip install octri_pokeapi_unofficial_demo_sdk==2.10.1
 ```
 
 ## Quickstart
@@ -31,8 +31,8 @@ The example calls `meta_retrieve` (GET `/api/v2/meta/`), a low-friction operatio
 ```python
 import asyncio
 
-from sdk import ClientConfig
-from sdk.sdk import PokAPI
+from octri_pokeapi_unofficial_demo_sdk import ClientConfig
+from octri_pokeapi_unofficial_demo_sdk.sdk import PokAPI
 
 
 async def main() -> None:
@@ -88,8 +88,8 @@ Pagination follows the cursor, offset, page-number, or next-URL contract declare
 
 ## Project layout and API discovery
 
-- Operation implementations are grouped under `src/sdk/methods/`.
-- 278 component models are split by API domain under `src/sdk/types/<domain>.py` or `types/<tag path>/models.py`, re-exported by `sdk.types`.
+- Operation implementations are grouped under `src/octri_pokeapi_unofficial_demo_sdk/methods/`.
+- 278 component models are split by API domain under `src/octri_pokeapi_unofficial_demo_sdk/types/<domain>.py` or `types/<tag path>/models.py`, re-exported by `octri_pokeapi_unofficial_demo_sdk.types`.
 - Component schemas can choose a nested model folder with `x-octri-sdk-tags: ["Billing/Invoices"]`; the first tag owns the model and `/` creates nesting.
 - [`sdk-manifest.json`](sdk-manifest.json) is the language-neutral public API index: operations, request/response modes, model properties, enum values, and generation settings.
 - Public barrel/module exports are the compatibility boundary. Import public model names from those exports; internal domain filenames may evolve without changing model names.
